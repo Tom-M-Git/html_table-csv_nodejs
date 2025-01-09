@@ -1,0 +1,17 @@
+{
+  "name": "html_table-csv_converter_js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "bin": {
+    "htmltb-csv": "./index.js"
+  },
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "@Tom-M-Git",
+  "license": "MIT",
+  "description": "A command-line tool to convert HTML table into CSV in UTF-8. All cells wrapped in quotes.",
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
