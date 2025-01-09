@@ -50,6 +50,12 @@ rl.question("Type an HTML file path: ", (filePath) => {
 		// You have to provide (error) variable in catch to properly handle an error.
 		console.error("Error: Something went wrong. Check the file path.", error.message);
 	} finally {
-		rl.close(); // Close the readline interface
+		enterToExit()
 	}
 });
+const enterToExit = () => {
+	rl.question("Press Enter to exit...", () => {
+		rl.close(); // Close the readline interface
+		process.exit(0); // Ensure the process exits cleanly
+	});
+};
