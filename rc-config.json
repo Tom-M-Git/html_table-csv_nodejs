@@ -1,0 +1,11 @@
+{
+	"CompanyName": "",
+	"ProductVersion": "0,1,1,0",
+	"FileVersion": "0,1,1,0",
+	"FileDescription": "Converts a single HTML table element into csv. All cells double quoted.",
+	"InternalName": "htmltb-csv",
+	"LegalCopyright": "Copyright (c) @Tom-M-Git 2025",
+	"OriginalFilename": "htmltb-csv-0.1.1.exe",
+	"ProductName": "HTML Table to CSV Converter"
+}
+  

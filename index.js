@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require("fs"); // A Node.js module for interacting with the file system (reading and writing files).
 const cheerio = require("cheerio"); // A lightweight library for parsing and manipulating HTML, similar to jQuery.
 const readline = require("readline"); // Needed for prompting for a file path. Provides an interface for reading data from a readable stream (e.g., process.stdin).
