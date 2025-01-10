@@ -4,6 +4,22 @@ const fs = require("fs"); // A Node.js module for interacting with the file syst
 const cheerio = require("cheerio"); // A lightweight library for parsing and manipulating HTML, similar to jQuery.
 const readline = require("readline"); // Needed for prompting for a file path. Provides an interface for reading data from a readable stream (e.g., process.stdin).
 
+
+// Load the package.json file to access version info
+const packageJson = require('./package.json');
+
+// Parse the command-line arguments
+const args = process.argv.slice(2);
+
+// Check for --version or -v argument
+if (args.includes('--version') || args.includes('-v') || args.includes('--help') || args.includes('-h')) {
+  console.log(`Version: ${packageJson.version}`);
+  process.exit(0); // Exit immediately after showing the version
+}
+
+
+
+
 // Create an interface to read input from the terminal
 const rl = readline.createInterface({
 	input: process.stdin,
