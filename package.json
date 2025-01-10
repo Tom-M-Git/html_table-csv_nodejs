@@ -11,6 +11,10 @@
   "author": "@Tom-M-Git",
   "license": "MIT",
   "description": "A command-line tool to convert HTML table into CSV in UTF-8. All cells wrapped in quotes.",
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/Tom-M-Git/html_table-csv_nodejs.git"
+  },
   "dependencies": {
     "cheerio": "^1.0.0"
   },
