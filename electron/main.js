@@ -9,7 +9,7 @@ const runCli = () => {
 
 
 // Load the package.json file to access version info
-const packageJson = require('./package.json');
+const packageJson = require('../package.json');
 
 // Parse the command-line arguments
 const args = process.argv.slice(2);
