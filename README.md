@@ -14,10 +14,16 @@ Access via a command name `htmltb-csv-js`, type a path to a file containing a si
 
 (The main file is ./index.js)
 
+### Docker image
+
+Pull a Docker image using code in the Packages
+
+### .exe
+
+Open the .exe file and it prompts for a file path.
+
 ---
 
 ## Update
 
-[2025-01-10]
-
-
+2025-01-11
