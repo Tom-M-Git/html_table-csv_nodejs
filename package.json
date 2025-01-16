@@ -1,16 +1,49 @@
 {
   "name": "htmltb-csv-js",
-  "version": "1.0.3",
-  "main": "index.js",
+  "version": "2.0.0",
+  "main": "electron/index.js",
   "bin": {
     "htmltb-csv-js": "./index.js"
   },
   "scripts": {
     "test": "node index.js",
-    "startelectron": "npx electron ./electron/main.js",
-    "pack:win": "electron-packager . MyApp --platform=win32 --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico",
-    "pack:mac": "electron-packager . MyApp --platform=darwin --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico",
-    "pack:linux": "electron-packager . MyApp --platform=linux --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico"
+    "startelectron": "npx electron ./electron/index.js",
+    "pack:win": "electron-packager . htmltb-csv --platform=win32 --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico --ignore=\"dist|.gitignore|.dockerignore|.gitattributes|.npmignore|.npmrc|compose.yaml|Dockerfile|example.html|rc-config.json|webpack.config.js\"",
+    "pack:mac": "electron-packager . htmltb-csv --platform=darwin --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico",
+    "pack:linux": "electron-packager . htmltb-csv --platform=linux --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico",
+    "build:win": "electron-builder --win portable",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux AppImage"
+  },
+  "build": {
+    "appId": "com.example.htmltb-csv",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/app-icon.ico"
+    },
+    "mac": {
+      "icon": "assets/app-icon.icns"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
   },
   "author": "@Tom-M-Git",
   "license": "MIT",
@@ -25,6 +58,7 @@
   "devDependencies": {
     "copy-webpack-plugin": "^12.0.2",
     "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
     "electron-packager": "^17.1.2",
     "html-webpack-plugin": "^5.6.3",
     "webpack": "^5.97.1",
