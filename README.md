@@ -26,6 +26,14 @@ After convertion is done, close the window.
 
 ---
 
+## Credit
+
+Icon:
+
+- <a href="https://www.flaticon.com/free-icons/csv" title="csv icons">Csv icons created by Abbasi - Flaticon</a>
+
+---
+
 ## Update
 
 2025-01-16
