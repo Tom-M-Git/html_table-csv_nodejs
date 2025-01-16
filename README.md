@@ -22,8 +22,10 @@ Pull a Docker image using code in the Packages
 
 Open the .exe file and it prompts for a file path.
 
+After convertion is done, close the window.
+
 ---
 
 ## Update
 
-2025-01-11
+2025-01-16
