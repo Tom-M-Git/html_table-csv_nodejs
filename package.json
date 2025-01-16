@@ -7,7 +7,10 @@
   },
   "scripts": {
     "test": "node index.js",
-    "startelectron": "npx electron ./electron/main.js"
+    "startelectron": "npx electron ./electron/main.js",
+    "pack:win": "electron-packager . MyApp --platform=win32 --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico",
+    "pack:mac": "electron-packager . MyApp --platform=darwin --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico",
+    "pack:linux": "electron-packager . MyApp --platform=linux --arch=x64 --out=dist --overwrite --icon=assets/app-icon.ico"
   },
   "author": "@Tom-M-Git",
   "license": "MIT",

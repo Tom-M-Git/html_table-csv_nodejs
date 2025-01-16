@@ -1,89 +1,103 @@
-const { app } = require("electron");
-const fs = require("fs"); // A Node.js module for interacting with the file system (reading and writing files).
-const cheerio = require("cheerio"); // A lightweight library for parsing and manipulating HTML, similar to jQuery.
-const readline = require("readline"); // Needed for prompting for a file path. Provides an interface for reading data from a readable stream (e.g., process.stdin).
+const { app, BrowserWindow, dialog, ipcMain } = require("electron");
+const path = require("path");
+const fs = require("fs");
+const cheerio = require("cheerio");
 
+let mainWindow;
 
-// CLI Handler when calling electron
-const runCli = () => {
+const createWindow = () => {
+    mainWindow = new BrowserWindow({
+        width: 600,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
 
+    mainWindow.setMenuBarVisibility(false); // Disable the menu bar
 
-// Load the package.json file to access version info
-const packageJson = require('../package.json');
+    const indexPath = path.join(__dirname, "index.html");
+    mainWindow.loadFile(indexPath);
+};
 
-// Parse the command-line arguments
-const args = process.argv.slice(2);
+const sendMessage = (message) => {
+    if (mainWindow) {
+        mainWindow.webContents.send('message', message);
+    }
+};
 
-// Check for --version or -v argument
-if (args.includes('--version') || args.includes('-v') || args.includes('--help') || args.includes('-h')) {
-  console.log(`Version: ${packageJson.version}`);
-  process.exit(0); // Exit immediately after showing the version
-}
+const runCli = async () => {
+    sendMessage("Choose a .html file containing a <table> tag.");
 
+    try {
+        // Open a file dialog to select the HTML file
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+            properties: ["openFile"],
+            filters: [{ name: "HTML Files", extensions: ["html", "htm"] }],
+        });
 
+        if (canceled || filePaths.length === 0) {
+            sendMessage("Error: No file selected.");
+            app.quit();
+            return;
+        }
 
+        const filePath = filePaths[0];
+        sendMessage(`Selected file: ${filePath}`);
 
-// Create an interface to read input from the terminal
-const rl = readline.createInterface({
-	input: process.stdin,
-	output: process.stdout,
-  });
+        // Open a file dialog to select the output CSV file path
+        const { canceled: outputCanceled, filePath: outputPath } = await dialog.showSaveDialog({
+            defaultPath: "output.csv",
+            filters: [{ name: "CSV Files", extensions: ["csv"] }],
+        });
 
-// prompt for a file path.
-rl.question("Type an HTML file path: ", (filePath) => {
+        if (outputCanceled || !outputPath) {
+            sendMessage("Error: No output file path selected.");
+            app.quit();
+            return;
+        }
 
-	try {
-		// Load the HTML file
-		const html = fs.readFileSync(filePath, "utf8"); // Reads the HTML file example.html in UTF-8 encoding. Replace with your HTML file path
-		const $ = cheerio.load(html); // Loads the HTML content into Cheerio, which allows you to query and manipulate the HTML structure.
+        sendMessage(`Output file path: ${outputPath}`);
 
-		// Select the table
-		// $("table"): Selects the <table> element in the HTML file. You can modify the selector (e.g., $("table.my-table")) to target specific tables.
-		const table = $("table"); // Adjust selector if needed
+        // Load the HTML file
+        const html = await fs.promises.readFile(filePath, "utf8");
+        const $ = cheerio.load(html);
 
-		// Make sure all cells have double quotes and inner quotes are escaped.
-		const escapeAndQuote = (value) => `"${value.replace(/"/g, '""')}"`;
+        // Select the table
+        const table = $("table");
 
-		let csv = ""; // init csv string.
+        const escapeAndQuote = (value) => `"${value.replace(/"/g, '""')}"`;
 
-		// Iterate through table rows
-		// Finds all table rows (<tr> elements) inside the selected table.
-		table.find("tr").each((_, row) => {
-			// Loops through each row of the table.
-			// "_" is a placeholder for unused variables.
-		   const cells = $(row) // $(row): Wraps the current row in a Cheerio object to manipulate it.
-		   	.find("th, td") // Selects all header (<th>) and data (<td>) cells in the current row.
-			.map((_, cell) => {
-				const cellValue = $(cell).text().trim(); // Extracts and trims the text from each cell.
-				return escapeAndQuote(cellValue)
-			})
-			.get(); // Converts the Cheerio collection to a standard JavaScript array.
-		   csv += cells.join(",") + "\n"; // Joins all cell values with commas, creating a single CSV row. Appends the CSV row to the csv string, followed by a newline.
-		});
+        let csv = ""; // Initialize CSV string
 
-		// Add BOM to the beginning of the CSV content
-		const bom = "\uFEFF"; // BOM character for UTF-8
-		// \uFEFF is a special Unicode character that signifies the file is encoded in UTF-8.
-		// Write CSV to a file
-		fs.writeFileSync("output.csv", bom + csv); // Writes the accumulated csv string to a file, with BOM, named output.csv.
-		console.log("CSV file has been saved as output.csv");
-	} catch (error) {
-		// You have to provide (error) variable in catch to properly handle an error.
-		console.error("Error: Something went wrong. Check the file path.", error.message);
-	} finally {
-		enterToExit()
-	}
+        // Iterate through table rows
+        table.find("tr").each((_, row) => {
+            const cells = $(row)
+                .find("th, td")
+                .map((_, cell) => {
+                    const cellValue = $(cell).text().trim();
+                    return escapeAndQuote(cellValue);
+                })
+                .get();
+            csv += cells.join(",") + "\n";
+        });
+
+        // Write the CSV to a file
+        fs.writeFileSync(outputPath, "\uFEFF" + csv);
+        sendMessage(`CSV file has been saved as ${outputPath}`);
+    } catch (error) {
+        sendMessage(`Error: Something went wrong. Check the file path. ${error.message}`);
+    } finally {
+        sendMessage("DONE.");
+        sendMessage("CLOSE the WINDOW to exit.");
+        process.stdin.once("data", () => {
+            app.quit();
+        });
+    }
+};
+
+app.on("ready", () => {
+    createWindow();
+    runCli();
 });
-const enterToExit = () => {
-	rl.question("Press Enter to exit...", () => {
-		rl.close(); // Close the readline interface
-		process.exit(0); // Ensure the process exits cleanly
-	});
-};
-
-
-app.quit();
-
-};
-
-app.on("ready", runCli);

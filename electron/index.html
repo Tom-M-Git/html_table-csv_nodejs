@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to CSV Converter</title>
+    <style>
+	body {
+	    font-family: 'Courier New', Courier, monospace;
+	    background-color: #fafafa;
+	}
+	.green-text {
+		color: #33cc33;
+		font-size: 1.2em;
+		font-weight: bold;
+	}
+    </style>
+</head>
+<body>
+    <h1>HTML to CSV Converter</h1>
+    <div id="messages"></div>
+    <footer>App ver.: 1.0.0<br/>Copyright: MIT. @Tom-M-Git. 2025.</footer>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        ipcRenderer.on('message', (event, message) => {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+		if (message.includes("CLOSE the WINDOW")||message.includes("DONE")) {
+                messageElement.classList.add('green-text');
+            }
+            messagesDiv.appendChild(messageElement);
+        });
+    </script>
+</body>
+</html>
